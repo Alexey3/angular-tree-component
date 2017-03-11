@@ -14,17 +14,17 @@ import { deprecatedSelector } from '../deprecated-selector';
       <div [class.tree-children]="true"
           [class.tree-children-no-padding]="node.options.levelPadding"
           *ngIf="node.isExpanded">
-        <div *ngIf="node.children">
-          <tree-node-collection
-            [nodes]="node.children"
-            [templates]="templates">
-          </tree-node-collection>
-        </div>
+        <tree-node-collection
+          *ngIf="node.children"
+          [nodes]="node.children"
+          [templates]="templates">
+        </tree-node-collection>
         <tree-loading-component
           [style.padding-left]="node.getNodePadding()"
           class="tree-node-loading"
           *ngIf="!node.children"
           [template]="templates.loadingTemplate"
+          [node]="node"
         ></tree-loading-component>
       </div>
     </ng-container>
