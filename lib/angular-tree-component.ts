@@ -1,6 +1,7 @@
 import { NgModule }      from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Ng2MobxModule }      from 'ng2-mobx';
+import { MaterialModule } from '@angular/material';
 
 import { TREE_ACTIONS, IActionMapping, IActionHandler } from './models/tree-options.model';
 import { ITreeOptions, IAllowDropFn } from './defs/api';
@@ -70,7 +71,8 @@ export {
   ],
   imports: [
     CommonModule,
-    Ng2MobxModule
+    Ng2MobxModule,
+    MaterialModule.forRoot()
   ],
   providers: [
     TreeDraggedElement
