@@ -17,6 +17,7 @@ export class TreeNode implements ITreeNode {
   @observable index: number;
   @observable position = 0;
   @observable height: number;
+  @observable isMouseOver: boolean;
   @computed get level(): number {
     return this.parent ? this.parent.level + 1 : 0;
   }
@@ -315,11 +316,29 @@ export class TreeNode implements ITreeNode {
   mouseAction(actionName: string, $event, data: any = null) {
     this.treeModel.setFocus(true);
 
+    if (actionName === 'nodeEnter')
+    { 
+      this.isMouseOver = true;
+    }
+    if (actionName === 'nodeLeave')
+    { 
+      this.isMouseOver = false;
+    }
+
     const actionMapping = this.options.actionMapping.mouse;
     const action = actionMapping[actionName];
 
     if (action) {
       action(this.treeModel, this, $event, data);
+    }
+    
+    if (actionName === 'nodeEnter')
+    { 
+      this.fireEvent({ eventName: TREE_EVENTS.onNodeEnter, node: this, rawEvent: $event });
+    }
+    if (actionName === 'nodeLeave')
+    { 
+      this.fireEvent({ eventName: TREE_EVENTS.onNodeLeave, node: this, rawEvent: $event });
     }
   }
 

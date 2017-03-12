@@ -14,6 +14,10 @@ const actionMapping:IActionMapping = {
       $event.shiftKey
         ? TREE_ACTIONS.TOGGLE_SELECTED_MULTI(tree, node, $event)
         : TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event)
+    },
+    nodeEnter: (tree, node, $event) => {
+    },
+    nodeLeave: (tree, node, $event) => {
     }
   },
   keys: {

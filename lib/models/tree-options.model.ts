@@ -56,7 +56,9 @@ export interface IActionMapping {
     drag?: IActionHandler,
     dragEnd?: IActionHandler,
     dragOver?: IActionHandler,
-    drop?: IActionHandler
+    drop?: IActionHandler,
+    nodeEnter?: IActionHandler,
+    nodeLeave?: IActionHandler
   };
   keys?: {
     [key: number]: IActionHandler

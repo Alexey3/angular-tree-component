@@ -9,5 +9,7 @@ export const TREE_EVENTS = {
   onMoveNode: 'onMoveNode',
   onEvent: 'onEvent',
   onLoadChildren: 'onLoadChildren',
-  onChangeFilter: 'onChangeFilter'
+  onChangeFilter: 'onChangeFilter',
+  onNodeEnter: 'onNodeEnter',
+  onNodeLeave: 'onNodeLeave',
 };
