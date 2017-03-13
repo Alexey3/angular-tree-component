@@ -8,7 +8,7 @@ import { deprecatedSelector } from '../deprecated-selector';
   styles: [
     `.node-content-wrapper {
       display: inline-block;
-      padding: 2px 5px;
+      padding: 2px;
       border-radius: 2px;
       transition: background-color .15s,box-shadow .15s;
     }`,
