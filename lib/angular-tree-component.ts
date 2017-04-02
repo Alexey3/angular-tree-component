@@ -4,7 +4,7 @@ import { Ng2MobxModule }      from 'ng2-mobx';
 import { MaterialModule } from '@angular/material';
 
 import { TREE_ACTIONS, IActionMapping, IActionHandler } from './models/tree-options.model';
-import { ITreeOptions, IAllowDropFn } from './defs/api';
+import { ITreeOptions, IAllowDropFn, IAllowDragFn } from './defs/api';
 import { KEYS } from './constants/keys';
 import { TreeModel } from './models/tree.model';
 import { TreeNode } from './models/tree-node.model';
@@ -49,6 +49,7 @@ export {
   IActionMapping,
   IActionHandler,
   IAllowDropFn,
+  IAllowDragFn,
   LoadingComponent,
   TreeComponent,
   TreeNodeComponent,
