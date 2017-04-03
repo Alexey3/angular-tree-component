@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ITreeOptions } from 'angular-tree-component';
+import { ITreeOptions } from '../../../lib/angular-tree-component';
 
 @Component({
   selector: 'app-templates',
