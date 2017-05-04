@@ -33,6 +33,8 @@ import { TreeNode } from '../models/tree-node.model';
           [class.node-content-wrapper-focused]="node.isFocused"
           (click)="node.mouseAction('click', $event)"
           (dblclick)="node.mouseAction('dblClick', $event)"
+          (mouseenter)="node.mouseAction('nodeEnter', $event)"
+          (mouseleave)="node.mouseAction('nodeLeave', $event)"              
           (contextmenu)="node.mouseAction('contextMenu', $event)"
           (treeDrop)="node.onDrop($event)"
           [treeAllowDrop]="node.allowDrop"

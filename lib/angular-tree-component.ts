@@ -84,7 +84,7 @@ export {
   ],
   imports: [
     CommonModule,
-    MobxAngularModule
+    MobxAngularModule,
     MaterialModule.forRoot()
   ],
   providers: [

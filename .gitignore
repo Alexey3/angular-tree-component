@@ -65,3 +65,4 @@ testResults
 e2eResults
 
 e2e/dist
+example/cli/dist/
