@@ -19,30 +19,37 @@ export class TreeVirtualScroll {
     return this.yBlocks * Y_EPSILON;
   }
 
-  isEnabled() {
-    return this.treeModel.options.useVirtualScroll;
-  }
-
   @computed get totalHeight() {
     return this.treeModel.virtualRoot ? this.treeModel.virtualRoot.height : 0;
   }
 
   constructor(private treeModel: TreeModel) {
     treeModel.virtualScroll = this;
-    this._dispose = autorun(() => this.fixScroll());
+    this._dispose = [autorun(() => this.fixScroll())];
   }
 
   init() {
     const fn = this.recalcPositions.bind(this);
 
     fn();
-    reaction(() => this.treeModel.roots, fn);
-    reaction(() => this.treeModel.expandedNodeIds, fn);
-    reaction(() => this.treeModel.hiddenNodeIds, fn);
+    this._dispose = [
+      ...this._dispose,
+      reaction(() => this.treeModel.roots, fn),
+      reaction(() => this.treeModel.expandedNodeIds, fn),
+      reaction(() => this.treeModel.hiddenNodeIds, fn)
+    ];
     this.treeModel.subscribe(TREE_EVENTS.onLoadChildren, fn);
   }
 
-  recalcPositions() {
+  isEnabled() {
+    return this.treeModel.options.useVirtualScroll;
+  }
+
+  @action private _setYBlocks(value) {
+    this.yBlocks = value;
+  }
+
+  @action recalcPositions() {
     this.treeModel.virtualRoot.height = this._getPositionAfter(this.treeModel.getVisibleRoots(), 0);
   }
 
@@ -68,10 +75,10 @@ export class TreeVirtualScroll {
 
 
   clear() {
-    this._dispose();
+    this._dispose.forEach((d) => d());
   }
 
-  @action setNewScroll({ viewport }) {
+  @action setViewport(viewport) {
     Object.assign(this, {
       viewport,
       x: viewport.scrollLeft,
@@ -88,18 +95,18 @@ export class TreeVirtualScroll {
         node.position - this.viewportHeight / 2 : // scroll to middle
         node.position; // scroll to start
 
-      this.yBlocks = Math.floor(this.viewport.scrollTop / Y_EPSILON);
+      this._setYBlocks(Math.floor(this.viewport.scrollTop / Y_EPSILON));
     }
   }
 
   getViewportNodes(nodes) {
-    if (!this.viewportHeight || !nodes) return [];
+    if (!nodes) return [];
 
     const visibleNodes = nodes.filter((node) => !node.isHidden);
 
-    if (!visibleNodes.length) return [];
-
     if (!this.isEnabled()) return visibleNodes;
+
+    if (!this.viewportHeight || !visibleNodes.length) return [];
 
     // Search for first node in the viewport using binary search
     // Look for first node that starts after the beginning of the viewport (with buffer)
@@ -126,8 +133,8 @@ export class TreeVirtualScroll {
   fixScroll() {
     const maxY = Math.max(0, this.totalHeight - this.viewportHeight);
 
-    if (this.y < 0) this.yBlocks = 0;
-    if (this.y > maxY) this.yBlocks = maxY / Y_EPSILON;
+    if (this.y < 0) this._setYBlocks(0);
+    if (this.y > maxY) this._setYBlocks(maxY / Y_EPSILON);
   }
 }
 

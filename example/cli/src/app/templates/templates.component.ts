@@ -4,40 +4,43 @@ import { ITreeOptions } from '../../../lib/angular-tree-component';
 @Component({
   selector: 'app-templates',
   template: `
-    <h3>Display Field</h3>
-    <tree-root id="tree0" [focused]="true" [nodes]="nodes1" [options]="options0"></tree-root>
-
     <h3>treeNodeTemplate and loadingTemplate</h3>
     <tree-root id="tree1" [focused]="true" [nodes]="nodes1" [options]="options1">
-      <template #treeNodeTemplate let-node let-index="index">
+      <ng-template #treeNodeTemplate let-node let-index="index">
         <span [class]="node.data.className + 'Index'">{{ index }}</span>
         <span [class]="node.data.className" [class.title]="true">{{ node.data.title }}</span>
-      </template>
-      <template #loadingTemplate let-node>
+      </ng-template>
+      <ng-template #loadingTemplate let-node>
         <div [class]="node.data.className + 'Loading'">Loading {{ node.data.title }}...</div>
-      </template>
+      </ng-template>
+    </tree-root>
+    
+    <h3>treeNodeWrapper</h3>
+    <tree-root id="tree3" [focused]="true" [nodes]="nodes2" [options]="options1">
+      <ng-template #treeNodeWrapperTemplate let-node let-index="index">
+        <span [class]="node.data.className + 'Index'">{{ index }}</span>      
+         <input type="checkbox"><span>&rarr;</span>
+         <span [class]="node.data.className" [class.title]="true">{{ node.data.title }}</span>
+      </ng-template>
     </tree-root>
 
     <h3>treeNodeFullTemplate</h3>
     <tree-root id="tree2" [focused]="true" [nodes]="nodes2">
-      <template #treeNodeFullTemplate let-node let-index="index">
-        <div
-          [class.tree-node]="true"
-          [class.tree-node-expanded]="node.isExpanded && node.hasChildren"
-          [class.tree-node-collapsed]="node.isCollapsed && node.hasChildren"
-          [class.tree-node-leaf]="node.isLeaf"
-          [class.tree-node-active]="node.isActive"
-          [class.tree-node-focused]="node.isFocused">
-
+      <ng-template #treeNodeFullTemplate let-node let-index="index" let-templates="templates">
+        <div class="tree-node">
           <input type="checkbox" [checked]="node.isActive" (change)="node.toggleActivated(true)" />
           <tree-node-expander [node]="node"></tree-node-expander>
-          <div class="node-content-wrapper" (click)="node.toggleActivated(true)">
+          <div
+            class="node-content-wrapper"
+            [class.node-content-wrapper-active]="node.isActive"
+            [class.node-content-wrapper-focused]="node.isFocused"
+            (click)="node.toggleActivated(true)">
             <span [class]="node.data.className + 'Index'">{{ index }}</span>
             <span [class]="node.data.className" [class.title]="true">{{ node.data.title }}</span>
           </div>
           <tree-node-children [node]="node" [templates]="templates"></tree-node-children>
         </div>
-      </template>
+      </ng-template>
     </tree-root>
   `,
   styles: []
@@ -62,12 +65,15 @@ export class TemplatesComponent {
     },
     {
       title: 'root2',
-      className: 'root2Class'
+      className: 'root2Class',
+      children: [
+        { title: 'child1', className: 'child1Class' }
+      ]
     }
   ];
 
   options1: ITreeOptions = {
-    getChildren: () => new Promise((resolve, reject) => {})
+    getChildren: () => new Promise((resolve, reject) => { })
   };
 
   options0: ITreeOptions = {

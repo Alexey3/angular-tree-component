@@ -84,6 +84,21 @@ export interface ITreeOptions {
     * Default is 2
     */
    dropSlotHeight?: number;
+   /**
+    * Boolean whether or not to animate expand / collapse of nodes.
+    * Default is false
+    */
+   animateExpand?: boolean;
+   /**
+    * Speed of expand animation (described in pixels per 17 ms).
+    * Default is 30
+    */
+   animateSpeed?: number;
+   /**
+    * Increase of expand animation speed (described in multiply per 17 ms).
+    * Default is 1.2
+    */
+   animateAcceleration?: number;
  }
 
 /**
@@ -329,7 +344,7 @@ export interface ITreeModel {
   getNodeById(id: any): ITreeNode;
   /**
    * @param     predicate - either an object or a function, used as a test condition on all nodes.
-   *            Could be every predicate that's supported by lodash-es-es `find` method
+   *            Could be every predicate that's supported by lodash's `find` method
    * @param     statrNode  optional. Which node to start traversing from
    * @returns   First node that matches the predicate, if found - null otherwise
    */

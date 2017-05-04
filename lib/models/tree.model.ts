@@ -6,7 +6,10 @@ import { TreeVirtualScroll } from './tree-virtual-scroll.model';
 import { ITreeModel } from '../defs/api';
 import { TREE_EVENTS } from '../constants/events';
 
-import { first, last, compact, find, includes, remove, indexOf, pullAt, isString, isFunction } from 'lodash-es';
+import * as _ from 'lodash';
+
+const { first, last, compact, find, includes,
+  remove, indexOf, pullAt, isString, isFunction } = _;
 
 @Injectable()
 export class TreeModel implements ITreeModel {

@@ -1,10 +1,11 @@
-import { observable, computed, autorun } from 'mobx';
+import { observable, computed, autorun, action } from 'mobx';
 import { TreeModel } from './tree.model';
 import { TreeOptions } from './tree-options.model';
 import { ITreeNode } from '../defs/api';
 import { TREE_EVENTS } from '../constants/events';
 
-import { first, last } from 'lodash-es';
+import * as _ from 'lodash';
+const { first, last } = _;
 
 export class TreeNode implements ITreeNode {
   @computed get isHidden() { return this.treeModel.isHidden(this); };
@@ -212,10 +213,11 @@ export class TreeNode implements ITreeNode {
   }
 
   doForAll(fn: (node: ITreeNode) => any) {
-    fn(this);
-    if (this.children) {
-      this.children.forEach((child) => child.doForAll(fn));
-    }
+    Promise.resolve(fn(this)).then(() => {
+      if (this.children) {
+        this.children.forEach((child) => child.doForAll(fn));
+      }
+    });
   }
 
   expandAll() {
@@ -346,7 +348,7 @@ export class TreeNode implements ITreeNode {
     return this.options.nodeHeight(this);
   }
 
-  _initChildren() {
+  @action _initChildren() {
     this.children = this.getField('children')
       .map((c, index) => new TreeNode(c, this, this.treeModel, index));
   }

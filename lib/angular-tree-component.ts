@@ -1,6 +1,6 @@
 import { NgModule }      from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Ng2MobxModule }      from 'ng2-mobx';
+import { MobxAngularModule } from 'mobx-angular';
 import { MaterialModule } from '@angular/material';
 
 import { TREE_ACTIONS, IActionMapping, IActionHandler } from './models/tree-options.model';
@@ -18,25 +18,13 @@ import { TreeNodeDropSlot } from './components/tree-node-drop-slot.component';
 import { TreeNodeExpanderComponent } from './components/tree-node-expander.component';
 import { TreeNodeChildrenComponent } from './components/tree-node-children.component';
 import { TreeNodeCollectionComponent } from './components/tree-node-collection.component';
+import { TreeNodeWrapperComponent } from './components/tree-node-wrapper.component';
 import { TreeViewportComponent } from './components/tree-viewport.component';
 import { TreeDropDirective } from './directives/tree-drop.directive';
 import { TreeDragDirective } from './directives/tree-drag.directive';
+import { TreeAnimateOpenDirective } from './directives/tree-animate-open.directive';
 
 import './polyfills';
-
-const exportedDirectives = [
-  TreeComponent,
-  TreeNodeComponent,
-  TreeNodeContent,
-  LoadingComponent,
-  TreeDropDirective,
-  TreeDragDirective,
-  TreeNodeExpanderComponent,
-  TreeNodeChildrenComponent,
-  TreeNodeDropSlot,
-  TreeNodeCollectionComponent,
-  TreeViewportComponent
-];
 
 export {
   TreeModel,
@@ -65,14 +53,38 @@ export {
 
 @NgModule({
   declarations: [
-    ...exportedDirectives
+    TreeComponent,
+    TreeNodeComponent,
+    TreeNodeContent,
+    LoadingComponent,
+    TreeDropDirective,
+    TreeDragDirective,
+    TreeNodeExpanderComponent,
+    TreeNodeChildrenComponent,
+    TreeNodeDropSlot,
+    TreeNodeCollectionComponent,
+    TreeViewportComponent,
+    TreeNodeWrapperComponent,
+    TreeAnimateOpenDirective
   ],
   exports: [
-    ...exportedDirectives
+    TreeComponent,
+    TreeNodeComponent,
+    TreeNodeContent,
+    LoadingComponent,
+    TreeDropDirective,
+    TreeDragDirective,
+    TreeNodeExpanderComponent,
+    TreeNodeChildrenComponent,
+    TreeNodeDropSlot,
+    TreeNodeCollectionComponent,
+    TreeViewportComponent,
+    TreeNodeWrapperComponent,
+    TreeAnimateOpenDirective
   ],
   imports: [
     CommonModule,
-    Ng2MobxModule,
+    MobxAngularModule
     MaterialModule.forRoot()
   ],
   providers: [

@@ -1,14 +1,17 @@
 import {
   Component, Input, Output, OnChanges, EventEmitter, Renderer, ElementRef,
-  ViewEncapsulation, ContentChild, TemplateRef, HostListener
+  ViewEncapsulation, ContentChild, TemplateRef, HostListener, ViewChild
 } from '@angular/core';
 import { TreeModel } from '../models/tree.model';
 import { TreeNode } from '../models/tree-node.model';
 import { TreeDraggedElement } from '../models/tree-dragged-element.model';
 import { TreeOptions } from '../models/tree-options.model';
+import { TreeViewportComponent } from './tree-viewport.component';
 
-import { includes, pick } from 'lodash-es';
 import { deprecatedSelector } from '../deprecated-selector';
+
+import * as _ from 'lodash';
+const { includes, pick }  = _;
 
 @Component({
   selector: 'Tree, tree-root',
@@ -31,7 +34,7 @@ import { deprecatedSelector } from '../deprecated-selector';
     }`
   ],
   template: `
-    <tree-viewport>
+    <tree-viewport #viewport>
       <div
         class="tree"
         [class.node-dragging]="treeDraggedElement.isDragging()">
@@ -42,6 +45,7 @@ import { deprecatedSelector } from '../deprecated-selector';
           [templates]="{
             loadingTemplate: loadingTemplate,
             treeNodeTemplate: treeNodeTemplate,
+            treeNodeWrapperTemplate: treeNodeWrapperTemplate,
             treeNodeFullTemplate: treeNodeFullTemplate
           }">
         </tree-node-collection>
@@ -61,7 +65,10 @@ export class TreeComponent implements OnChanges {
 
   @ContentChild('loadingTemplate') loadingTemplate: TemplateRef<any>;
   @ContentChild('treeNodeTemplate') treeNodeTemplate: TemplateRef<any>;
+  @ContentChild('treeNodeWrapperTemplate') treeNodeWrapperTemplate: TemplateRef<any>;
   @ContentChild('treeNodeFullTemplate') treeNodeFullTemplate: TemplateRef<any>;
+
+  @ViewChild('viewport') viewportComponent: TreeViewportComponent;
 
   // Will be handled in ngOnChanges
   @Input() set nodes(nodes: any[]) { };
@@ -119,5 +126,9 @@ export class TreeComponent implements OnChanges {
       nodes: changes.nodes && changes.nodes.currentValue,
       events: pick(this, this.treeModel.eventNames)
     });
+  }
+
+  sizeChanged() {
+    this.viewportComponent.setViewport();
   }
 }

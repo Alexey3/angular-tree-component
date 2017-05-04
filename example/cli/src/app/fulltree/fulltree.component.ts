@@ -52,12 +52,12 @@ const actionMapping:IActionMapping = {
       (onEvent)="onEvent($event)"
       
     >
-      <template #treeNodeTemplate let-node>
+      <ng-template #treeNodeTemplate let-node>
         <span title="{{node.data.subTitle}}">{{ node.data.name }}</span>
         <span class="pull-right">{{ childrenCount(node) }}</span>
         <button (click)="go($event)">Custom Action</button>
-      </template>
-      <template #loadingTemplate>Loading, please hold....</template>
+      </ng-template>
+      <ng-template #loadingTemplate>Loading, please hold....</ng-template>
     </tree-root>
   </div>
   <br>
@@ -161,11 +161,11 @@ export class FullTreeComponent {
         }
       ];
 
-      for(let i = 0; i < 100; i++) {
+      for(let i = 0; i < 4; i++) {
         this.nodes.push({
           name: `rootDynamic${i}`,
           subTitle: `root created dynamically ${i}`,
-          children: new Array(4).fill(null).map((item, n) => ({
+          children: new Array((i + 1) * 100).fill(null).map((item, n) => ({
             name: `childDynamic${i}.${n}`,
             subTitle: `child created dynamically ${i}`,
             hasChildren: false
@@ -225,7 +225,10 @@ export class FullTreeComponent {
     actionMapping,
     nodeHeight: 23,
     allowDrag: true,
-    useVirtualScroll: true
+    useVirtualScroll: true,
+    animateExpand: true,
+    animateSpeed: 30,
+    animateAcceleration: 1.2
   }
   onEvent(event) {
     console.log(event);

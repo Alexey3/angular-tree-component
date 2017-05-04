@@ -2,7 +2,7 @@ import {
   Component, Input, ViewEncapsulation, OnInit, OnDestroy, ElementRef
 } from '@angular/core';
 import { reaction, autorun } from 'mobx';
-import { observable, computed } from 'ng2-mobx';
+import { observable, computed, action } from 'mobx-angular';
 import { TreeVirtualScroll } from '../models/tree-virtual-scroll.model';
 import { TreeNode } from '../models/tree-node.model';
 import { TreeModel } from '../models/tree.model';
@@ -28,7 +28,7 @@ import { deprecatedSelector } from '../deprecated-selector';
 export class TreeNodeCollectionComponent implements OnInit, OnDestroy {
   @Input()
   get nodes() { return this._nodes; }
-  set nodes(nodes) { this._nodes = nodes; }
+  set nodes(nodes) { this.setNodes(nodes); }
 
   @Input() treeModel: TreeModel;
 
@@ -37,6 +37,7 @@ export class TreeNodeCollectionComponent implements OnInit, OnDestroy {
   @Input() templates;
 
   @observable viewportNodes: TreeNode[];
+
   @computed get marginTop(): string {
     const firstNode = this.viewportNodes && this.viewportNodes.length && this.viewportNodes[0];
     const relativePosition = firstNode ? firstNode.position - firstNode.parent.position - firstNode.parent.getSelfHeight() : 0;
@@ -48,6 +49,10 @@ export class TreeNodeCollectionComponent implements OnInit, OnDestroy {
 
   constructor(private elementRef: ElementRef) {
     deprecatedSelector('TreeNodeCollection', 'tree-node-collection', elementRef);
+  }
+
+  @action setNodes(nodes) {
+    this._nodes = nodes;
   }
 
   ngOnInit() {

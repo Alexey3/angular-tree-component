@@ -1,5 +1,30 @@
+<a name="3.5.0"></a>
+# 3.5.0 (2017-29-04)
+* doForAll allows promises (supports expandAll of async nodes)
+
+<a name="3.4.1"></a>
+# 3.4.1 (2017-29-04)
+* Fixed SystemJS errors
+
+<a name="3.4.0"></a>
+# 3.4.0 (2017-28-04)
+* Add animations
+* Add node wrapper template
+* Fixed drop slot style
+
+<a name="3.3.1"></a>
+# 3.3.1 (2017-19-04)
+* Support useStrict mode in MobX
+
+<a name="3.3.0"></a>
+# 3.3.0 (2017-17-04)
+* Reduce bundle size
+* Fix tree not rendered when hidden then shown
+* Update to mobx-angular
+
 <a name="3.2.4"></a>
-# 3.2.4 (2017-XX-XX)
+# 3.2.4 (2017-04-04)
+* Support Angular 4
 * Fixed tree-node and tree-node-level-X classes.
 * Removed redundant div in children
 * Added integration tests
@@ -9,6 +34,7 @@
 * Fixed filtering without virtual scroll option
 * allowDrag allows functions
 * Drag and drop fix for IE9+
+* Fixed doForAll to run recursively
 
 <a name="3.2.3"></a>
 # 3.2.3 (2017-03-08)
