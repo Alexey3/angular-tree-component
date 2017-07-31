@@ -37,6 +37,9 @@ import { TreeNode } from '../models/tree-node.model';
           (mouseleave)="node.mouseAction('nodeLeave', $event)"              
           (contextmenu)="node.mouseAction('contextMenu', $event)"
           (treeDrop)="node.onDrop($event)"
+          (treeDropDragOver)="node.mouseAction('dragOver', $event)"
+          (treeDropDragLeave)="node.mouseAction('dragLeave', $event)"
+          (treeDropDragEnter)="node.mouseAction('dragEnter', $event)"
           [treeAllowDrop]="node.allowDrop"
           [treeDrag]="node"
           [treeDragEnabled]="node.allowDrag()">

@@ -10,8 +10,8 @@ export interface IActionHandler {
 }
 
 export const TREE_ACTIONS = {
-  TOGGLE_SELECTED: (tree: TreeModel, node: TreeNode, $event: any) => node.toggleActivated(),
-  TOGGLE_SELECTED_MULTI: (tree: TreeModel, node: TreeNode, $event: any) => node.toggleActivated(true),
+  TOGGLE_SELECTED: (tree: TreeModel, node: TreeNode, $event: any) => node && node.toggleActivated(),
+  TOGGLE_SELECTED_MULTI: (tree: TreeModel, node: TreeNode, $event: any) => node && node.toggleActivated(true),
   SELECT: (tree: TreeModel, node: TreeNode, $event: any) => node.setIsActive(true),
   DESELECT: (tree: TreeModel, node: TreeNode, $event: any) => node.setIsActive(false),
   FOCUS: (tree: TreeModel, node: TreeNode, $event: any) => node.focus(),
@@ -56,7 +56,9 @@ export interface IActionMapping {
     drag?: IActionHandler,
     dragEnd?: IActionHandler,
     dragOver?: IActionHandler,
-    drop?: IActionHandler,
+    dragLeave?: IActionHandler,
+    dragEnter?: IActionHandler,
+    drop?: IActionHandler
     nodeEnter?: IActionHandler,
     nodeLeave?: IActionHandler
   };
@@ -70,22 +72,22 @@ export class TreeOptions {
   get displayField(): string { return this.options.displayField || 'name'; }
   get idField(): string { return this.options.idField || 'id'; }
   get isExpandedField(): string { return this.options.isExpandedField || 'isExpanded'; }
-  get isHiddenField(): string { return this.options.isHiddenField || 'isHidden'; }
   get getChildren(): any { return this.options.getChildren; }
   get levelPadding(): number { return this.options.levelPadding || 0; }
   get useVirtualScroll(): boolean { return this.options.useVirtualScroll; }
   get animateExpand(): boolean { return this.options.animateExpand; }
   get animateSpeed(): number { return this.options.animateSpeed || 30; }
   get animateAcceleration(): number { return this.options.animateAcceleration || 1.2; }
+  get scrollOnSelect(): boolean { return this.options.scrollOnSelect === undefined ? true : this.options.scrollOnSelect; }
   actionMapping: IActionMapping;
 
   constructor(private options: ITreeOptions = {}) {
     this.actionMapping = _.defaultsDeep({}, this.options.actionMapping, defaultActionMapping);
   }
 
-  allowDrop(element, to): boolean {
+  allowDrop(element, to, $event?): boolean {
     if (this.options.allowDrop instanceof Function) {
-      return this.options.allowDrop(element, to);
+      return this.options.allowDrop(element, to, $event);
     }
     else {
       return this.options.allowDrop === undefined ? true : this.options.allowDrop;

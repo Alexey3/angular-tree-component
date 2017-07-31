@@ -1,6 +1,5 @@
-import { Component, Input, ViewEncapsulation, ElementRef } from '@angular/core';
+import { Component, Input, ViewEncapsulation } from '@angular/core';
 import { TreeNode } from '../models/tree-node.model';
-import { deprecatedSelector } from '../deprecated-selector';
 
 @Component({
   selector: 'TreeNodeDropSlot, tree-node-drop-slot',
@@ -21,10 +20,6 @@ export class TreeNodeDropSlot {
   @Input() node: TreeNode;
   @Input() dropIndex: number;
 
-  constructor(private elementRef: ElementRef) {
-    deprecatedSelector('TreeNodeDropSlot', 'tree-node-drop-slot', elementRef);
-  }
-
   onDrop($event) {
     this.node.mouseAction('drop', $event.event, {
       from: $event.element,
@@ -32,7 +27,7 @@ export class TreeNodeDropSlot {
     });
   }
 
-  allowDrop(element) {
-    return this.node.options.allowDrop(element, { parent: this.node, index: this.dropIndex });
+  allowDrop(element, $event) {
+    return this.node.options.allowDrop(element, { parent: this.node, index: this.dropIndex }, $event);
   }
 }

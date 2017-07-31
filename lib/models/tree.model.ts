@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { observable, computed, action } from 'mobx';
+import { observable, computed, action, autorun } from 'mobx';
 import { TreeNode } from './tree-node.model';
 import { TreeOptions } from './tree-options.model';
 import { TreeVirtualScroll } from './tree-virtual-scroll.model';
@@ -37,7 +37,7 @@ export class TreeModel implements ITreeModel {
   fireEvent(event) {
     event.treeModel = this;
     this.events[event.eventName].emit(event);
-    this.events.onEvent.emit(event);
+    this.events.event.emit(event);
   }
 
   subscribe(eventName, fn) {
@@ -184,12 +184,11 @@ export class TreeModel implements ITreeModel {
     // Fire event:
     if (this.firstUpdate) {
       if (this.roots) {
-        this.fireEvent({ eventName: TREE_EVENTS.onInitialized });
         this.firstUpdate = false;
         this._calculateExpandedNodes();
       }
     } else {
-      this.fireEvent({ eventName: TREE_EVENTS.onUpdateData });
+      this.fireEvent({ eventName: TREE_EVENTS.updateData });
     }
   }
 
@@ -251,15 +250,15 @@ export class TreeModel implements ITreeModel {
 
     if (value) {
       node.focus();
-      this.fireEvent({ eventName: TREE_EVENTS.onActivate, node });
+      this.fireEvent({ eventName: TREE_EVENTS.activate, node });
     } else {
-      this.fireEvent({ eventName: TREE_EVENTS.onDeactivate, node });
+      this.fireEvent({ eventName: TREE_EVENTS.deactivate, node });
     }
   }
 
   @action setExpandedNode(node, value) {
     this.expandedNodeIds = Object.assign({}, this.expandedNodeIds, {[node.id]: value});
-    this.fireEvent({ eventName: TREE_EVENTS.onToggleExpanded, node, isExpanded: value });
+    this.fireEvent({ eventName: TREE_EVENTS.toggleExpanded, node, isExpanded: value });
   }
 
   @action expandAll() {
@@ -272,6 +271,12 @@ export class TreeModel implements ITreeModel {
 
   @action setIsHidden(node, value) {
     this.hiddenNodeIds = Object.assign({}, this.hiddenNodeIds, {[node.id]: value});
+  }
+
+  @action setHiddenNodeIds(nodeIds) {
+    this.hiddenNodeIds = nodeIds.reduce((id, hiddenNodeIds) => Object.assign(hiddenNodeIds, {
+      [id]: true
+    }), {});
   }
 
   performKeyAction(node, $event) {
@@ -308,12 +313,12 @@ export class TreeModel implements ITreeModel {
     const ids = {};
     this.roots.forEach((node) => this._filterNode(ids, node, filterFn, autoShow));
     this.hiddenNodeIds = ids;
-    this.fireEvent({ eventName: TREE_EVENTS.onChangeFilter });
+    this.fireEvent({ eventName: TREE_EVENTS.changeFilter });
   }
 
   @action clearFilter() {
     this.hiddenNodeIds = {};
-    this.fireEvent({ eventName: TREE_EVENTS.onChangeFilter });
+    this.fireEvent({ eventName: TREE_EVENTS.changeFilter });
   }
 
   @action moveNode(node, to) {
@@ -342,7 +347,31 @@ export class TreeModel implements ITreeModel {
       to.parent.treeModel.update();
     }
 
-    this.fireEvent({ eventName: TREE_EVENTS.onMoveNode, node: originalNode, to: { parent: to.parent.data, index: toIndex } });
+    this.fireEvent({ eventName: TREE_EVENTS.moveNode, node: originalNode, to: { parent: to.parent.data, index: toIndex } });
+  }
+
+  getState() {
+    return {
+      expandedNodeIds: this.expandedNodeIds,
+      activeNodeIds: this.activeNodeIds,
+      hiddenNodeIds: this.hiddenNodeIds,
+      focusedNodeId: this.focusedNodeId
+    };
+  }
+
+  @action setState(state) {
+    if (!state) return;
+
+    Object.assign(this, {
+      expandedNodeIds: state.expandedNodeIds,
+      activeNodeIds: state.activeNodeIds,
+      hiddenNodeIds: state.hiddenNodeIds,
+      focusedNodeId: state.focusedNodeId
+    });
+  }
+
+  subscribeToState(fn) {
+    autorun(() => fn(this.getState()));
   }
 
   // private methods
@@ -396,7 +425,7 @@ export class TreeModel implements ITreeModel {
     this.activeNodes
       .filter((activeNode) => activeNode !== node)
       .forEach((activeNode) => {
-        this.fireEvent({ eventName: TREE_EVENTS.onDeactivate, node: activeNode });
+        this.fireEvent({ eventName: TREE_EVENTS.deactivate, node: activeNode });
       });
 
     if (value) {

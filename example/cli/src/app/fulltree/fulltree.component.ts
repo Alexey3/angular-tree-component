@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { TreeNode, TreeModel, TREE_ACTIONS, KEYS, IActionMapping, ITreeOptions } from 'angular-tree-component';
 import { TreeNode, TREE_ACTIONS, KEYS, IActionMapping } from '../../../lib/angular-tree-component';
 
 const actionMapping:IActionMapping = {
@@ -49,7 +50,8 @@ const actionMapping:IActionMapping = {
       [nodes]="nodes"
       [options]="customTemplateStringOptions"
       [focused]="true"
-      (onEvent)="onEvent($event)"
+      (event)="onEvent($event)"
+      (initialized)="onInitialized(tree)"
       
     >
       <ng-template #treeNodeTemplate let-node>
@@ -140,6 +142,7 @@ export class FullTreeComponent {
             {
               name: 'child2.1',
               subTitle: 'new and improved',
+              uuid: '11',
               hasChildren: false
             }, {
               name: 'child2.2',
@@ -217,14 +220,21 @@ export class FullTreeComponent {
       .setActiveAndVisible();
   }
 
-  customTemplateStringOptions = {
+  customTemplateStringOptions: ITreeOptions = {
     // displayField: 'subTitle',
     isExpandedField: 'expanded',
     idField: 'uuid',
     getChildren: this.getChildren.bind(this),
     actionMapping,
     nodeHeight: 23,
-    allowDrag: true,
+    allowDrag: (node) => {
+      // console.log('allowDrag?');
+      return true;
+    },
+    allowDrop: (node) => {
+      // console.log('allowDrop?');
+      return true;
+    },
     useVirtualScroll: true,
     animateExpand: true,
     animateSpeed: 30,
@@ -232,6 +242,10 @@ export class FullTreeComponent {
   }
   onEvent(event) {
     console.log(event);
+  }
+
+  onInitialized(tree) {
+    // tree.treeModel.getNodeById('11').setActiveAndVisible();
   }
 
   go($event) {

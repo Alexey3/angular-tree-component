@@ -10,8 +10,6 @@ export class TreeDragDirective implements DoCheck {
   @Input('treeDrag') draggedElement;
   @Input() treeDragEnabled;
 
-  private _allowDrag = (node) => true;
-
   constructor(private el: ElementRef, private renderer: Renderer, private treeDraggedElement: TreeDraggedElement) {
   }
 
@@ -22,10 +20,22 @@ export class TreeDragDirective implements DoCheck {
   @HostListener('dragstart', ['$event']) onDragStart(ev) {
     // setting the data is required by firefox
     ev.dataTransfer.setData('text', ev.target.id);
-    setTimeout(() => this.treeDraggedElement.set(this.draggedElement), 30);
+    this.treeDraggedElement.set(this.draggedElement);
+    if (this.draggedElement.mouseAction) {
+        this.draggedElement.mouseAction('dragStart', ev);
+    }
+  }
+
+  @HostListener('drag', ['$event']) onDrag(ev) {
+    if (this.draggedElement.mouseAction) {
+        this.draggedElement.mouseAction('drag', ev);
+    }
   }
 
   @HostListener('dragend') onDragEnd() {
+    if (this.draggedElement.mouseAction) {
+      this.draggedElement.mouseAction('dragEnd');
+    }
     this.treeDraggedElement.set(null);
   }
 }

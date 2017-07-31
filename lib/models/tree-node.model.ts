@@ -13,7 +13,6 @@ export class TreeNode implements ITreeNode {
   @computed get isActive() { return this.treeModel.isActive(this); };
   @computed get isFocused() { return this.treeModel.isNodeFocused(this); };
 
-  allowDrop: (draggedElement: any) => boolean;
   @observable children: TreeNode[];
   @observable index: number;
   @observable position = 0;
@@ -35,14 +34,14 @@ export class TreeNode implements ITreeNode {
   get originalNode() { return this._originalNode; };
 
   constructor(public data: any, public parent: TreeNode, public treeModel: TreeModel, index: number) {
-    this.id = this.id || uuid(); // Make sure there's a unique ID
+    if (this.id === undefined || this.id === null) {
+      this.id = uuid();
+    } // Make sure there's a unique id without overriding existing ids to work with immutable data structures
     this.index = index;
 
     if (this.getField('children')) {
       this._initChildren();
     }
-
-    this.allowDrop = this.allowDropUnbound.bind(this);
   }
 
   // helper get functions:
@@ -160,12 +159,12 @@ export class TreeNode implements ITreeNode {
   onDrop($event) {
     this.mouseAction('drop', $event.event, {
       from: $event.element,
-      to: { parent: this, index: 0 }
+      to: { parent: this, index: 0, dropOnNode: true }
     });
   }
 
-  allowDropUnbound(element) {
-    return this.options.allowDrop(element, { parent: this, index: 0 });
+  allowDrop = (element, $event?) => {
+    return this.options.allowDrop(element, { parent: this, index: 0 }, $event);
   }
 
   allowDrag() {
@@ -174,7 +173,7 @@ export class TreeNode implements ITreeNode {
 
 
   // helper methods:
-  loadChildren() {
+  loadNodeChildren() {
     if (!this.options.getChildren) {
       return Promise.resolve(); // Not getChildren method - for using redux
     }
@@ -190,7 +189,7 @@ export class TreeNode implements ITreeNode {
           });
       }}).then(() => {
         this.fireEvent({
-          eventName: TREE_EVENTS.onLoadChildren,
+          eventName: TREE_EVENTS.loadNodeChildren,
           node: this
         });
       });
@@ -246,7 +245,7 @@ export class TreeNode implements ITreeNode {
       this.treeModel.setExpandedNode(this, value);
 
       if (!this.children && this.hasChildren && value) {
-        return this.loadChildren();
+        return this.loadNodeChildren();
       }
     }
 
@@ -256,7 +255,7 @@ export class TreeNode implements ITreeNode {
   setIsActive(value, multi = false) {
     this.treeModel.setActiveNode(this, value, multi);
     if (value) {
-      this.focus();
+      this.focus(this.options.scrollOnSelect);
     }
 
     return this;
@@ -281,14 +280,16 @@ export class TreeNode implements ITreeNode {
     this.treeModel.virtualScroll.scrollIntoView(this, force);
   }
 
-  focus() {
+  focus(scroll = true) {
     let previousNode = this.treeModel.getFocusedNode();
     this.treeModel.setFocusedNode(this);
-    this.scrollIntoView();
-    if (previousNode) {
-      this.fireEvent({ eventName: TREE_EVENTS.onBlur, node: previousNode });
+    if (scroll) {
+      this.scrollIntoView();
     }
-    this.fireEvent({ eventName: TREE_EVENTS.onFocus, node: this });
+    if (previousNode) {
+      this.fireEvent({ eventName: TREE_EVENTS.blur, node: previousNode });
+    }
+    this.fireEvent({ eventName: TREE_EVENTS.focus, node: this });
 
     return this;
   }
@@ -297,7 +298,7 @@ export class TreeNode implements ITreeNode {
     let previousNode = this.treeModel.getFocusedNode();
     this.treeModel.setFocusedNode(null);
     if (previousNode) {
-      this.fireEvent({ eventName: TREE_EVENTS.onBlur, node: this });
+      this.fireEvent({ eventName: TREE_EVENTS.blur, node: this });
     }
 
     return this;

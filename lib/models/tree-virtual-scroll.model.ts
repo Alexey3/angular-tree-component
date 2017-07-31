@@ -28,6 +28,10 @@ export class TreeVirtualScroll {
     this._dispose = [autorun(() => this.fixScroll())];
   }
 
+  fireEvent(event) {
+    this.treeModel.fireEvent(event);
+  }
+
   init() {
     const fn = this.recalcPositions.bind(this);
 
@@ -38,7 +42,7 @@ export class TreeVirtualScroll {
       reaction(() => this.treeModel.expandedNodeIds, fn),
       reaction(() => this.treeModel.hiddenNodeIds, fn)
     ];
-    this.treeModel.subscribe(TREE_EVENTS.onLoadChildren, fn);
+    this.treeModel.subscribe(TREE_EVENTS.loadNodeChildren, fn);
   }
 
   isEnabled() {
@@ -91,11 +95,13 @@ export class TreeVirtualScroll {
     if (force || // force scroll to node
       node.position < this.y || // node is above viewport
       node.position + node.getSelfHeight() > this.y + this.viewportHeight) { // node is below viewport
-      this.viewport.scrollTop = scrollToMiddle ?
-        node.position - this.viewportHeight / 2 : // scroll to middle
-        node.position; // scroll to start
+      if (this.viewport) {
+        this.viewport.scrollTop = scrollToMiddle ?
+          node.position - this.viewportHeight / 2 : // scroll to middle
+          node.position; // scroll to start
 
-      this._setYBlocks(Math.floor(this.viewport.scrollTop / Y_EPSILON));
+        this._setYBlocks(Math.floor(this.viewport.scrollTop / Y_EPSILON));
+      }
     }
   }
 

@@ -1,3 +1,47 @@
+<a name="4.0.0"></a>
+# 4.0.0 (2017-29-07)
+* Breaking change - Renamed loadChildren to loadNodeChildren because of AoT
+* Breaking change - removed deprecated event names onXXX
+* Breaking change - removed deprecated component names
+* Fixed bug for Angular Universal
+* added 'drag' action mapping
+
+<a name="3.9.0"></a>
+# 3.9.0 (2017-28-07)
+* Added setHiddenNodeIds
+* Added state 2 way binding
+* Removed isHiddenField
+
+<a name="3.8.0"></a>
+# 3.8.0 (2017-15-07)
+* Added scrollOnFocus
+* Added RTL example
+
+<a name="3.7.3"></a>
+# 3.7.3 (2017-08-06)
+* Prevent overwriting existing node ids to allow use with immutable objects
+* Fix MobX version to support AoT
+
+<a name="3.7.2"></a>
+# 3.7.2 (2017-21-05)
+* Fixed close / open quickly when animating
+
+<a name="3.7.1"></a>
+# 3.7.1 (2017-21-05)
+* Fixed allowDrop
+
+<a name="3.7.0"></a>
+# 3.7.0 (2017-20-05)
+* Firing onInitialized after viewport set
+* Rename events - "onXXX" => "XXX"
+* Added 'dropOnNode' to event when dropping directly on node
+
+<a name="3.6.0"></a>
+# 3.6.0 (2017-10-05)
+* added drag over / leave / enter / end to action mapping
+* added $event to allowDrop function
+* Allow for node ID=0
+
 <a name="3.5.0"></a>
 # 3.5.0 (2017-29-04)
 * doForAll allows promises (supports expandAll of async nodes)

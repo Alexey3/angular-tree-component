@@ -50,17 +50,10 @@ ng serve
 ```
 
 ## SystemJS
-You'll need to load the UMD bundle to work with SystemJS.  
-Add these lines to systemjs.config.js:  
-```
-  map: {
-    // angular bundles
-    '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
-    …
-    'angular-tree-component': 'node_modules/angular2-tree-component/dist/angular-tree-component.umd.js',
-    …
-  }
-```
+Sorry guys, SystemJS is not supported.
+Modern web applications use bundlers like Webpack.
+
+We've tried to support SystemJS for a year, but it just causes too many issues.
 
 ## What's next
 We would always love to hear suggestions for features & improvements - just open an issue.
@@ -73,8 +66,7 @@ Some things on our mind down the road:
 * Add more examples
 
 ## Contributing
-There are currently no unit tests (yet).
-
-However, if you wish to contribute code, you can run `npm run example:cli` and open [localhost:4200](http://localhost:4200) to test your code manually before submitting a pull request.
+run `npm run example:cli` and open [localhost:4200](http://localhost:4200) to test your code before submitting a pull request.  
+Windows users - if it doesn't work try `npm run example:cli:win`.  
 
 Please check the issues / project before starting to work on a feature / bug to make sure it's not already in progress.
